@@ -26,6 +26,10 @@
 // @include      http*://*musicbrainz.org/work/create*
 // @include      http*://*musicbrainz.org/work/*/edit
 // @exclude      http*://*musicbrainz.org/work/*/alias/*/edit
+// @include      http*://*musicbrainz.org/series/create*
+// @include      http*://*musicbrainz.org/series/*/edit
+// @exclude      http*://*musicbrainz.org/series/*/alias/*/edit
+// @exclude      http*://*musicbrainz.org/series/*/credit/*/edit
 // @grant        GM_xmlhttpRequest
 // @connect      wikipedia.org
 // @connect      isni.org
@@ -64,6 +68,7 @@ class WikiDataHelpers {
             mbidArtist: 'P434',
             mbidArea: 'P982',
             mbidPlace: 'P1004',
+            mbidSeries: 'P1407',
             members: 'P527',
             student: 'P802',
             teacher: 'P1066',
@@ -74,6 +79,9 @@ class WikiDataHelpers {
             idLoC: 'P244',
             idWorldCat: 'P244',
             idBNF: 'P268',
+            idRefId: 'P269',
+            idCiNii: 'P271',
+            idWebNDL: 'P349',
             idTrove: 'P1315',
             // databases
             idIMDB: 'P345',
@@ -84,10 +92,13 @@ class WikiDataHelpers {
             idMetalArchivesBand: 'P1952',
             idDiscogs: 'P1953',
             idMetalArchivesArtist: 'P1989',
+            idBookBrainz: 'P2607',
             idSecondHandSongs: 'P2909',
             idSNAC: 'P3430',
             idVGMDB: 'P3435',
             idOperabase: 'P4869',
+            idRateYourMusic: 'P5404',
+            idWhoSampled: 'P6517',
             // social media
             idTwitter: 'P2002',
             idInstagram: 'P2003',
@@ -97,6 +108,7 @@ class WikiDataHelpers {
             idMyspace: 'P3265',
             idWeibo: 'P3579',
             idPinterest: 'P3836',
+            idTikTok: 'P7085',
             idThreads: 'P11892',
             // other
             idSpotify: 'P1902',
@@ -113,7 +125,21 @@ class WikiDataHelpers {
             idSongkick: 'P3478',
             idVimeo: 'P4015',
             idPatreon: 'P4175',
+            idTwitch: 'P5797',
             idAnghami: 'P10885',
+            idImage: 'P18',
+            //series
+            idFeed: 'P1019',
+            idApple: 'P5842',
+            idHeart: 'P7324',
+            idListen: 'P10213',
+            idNPR: 'P5840',
+            idPlayer: 'P9010',
+            //idPocket: 'P9006',
+            idPIndex: 'P11740',
+            idPodchaser: 'P7998',
+            idSpotifyShow: 'P5916',
+            presenter: 'P371',
             // missing: Tumblr (P3943), Bandcamp (P3283)
         };
         this.urls = {
@@ -124,21 +150,27 @@ class WikiDataHelpers {
             idLoC: 'https://id.loc.gov/authorities/names/',
             idWorldCat: 'https://www.worldcat.org/identities/lccn-',
             idBNF: 'http://catalogue.bnf.fr/ark:/12148/cb',
+            idRefId: 'http://www.idref.fr/',
+            idCiNii: 'https://ci.nii.ac.jp/author/',
+            idWebNDL: 'https://id.ndl.go.jp/auth/ndlna/',
             idTrove: 'https://nla.gov.au/nla.party-',
             // databases
             idIMDB: 'https://www.imdb.com/name/',
             idOL: 'https://openlibrary.org/works/',
             idIMSLP: 'https://imslp.org/wiki/',
-            idIDBD: 'https://ibdb.com/person.php?id=',
+            idIDBD: 'https://www.ibdb.com/broadway-cast-staff/',
             idAllMusic: 'https://www.allmusic.com/artist/',
             idMetalArchivesBand: 'https://www.metal-archives.com/band.php?id=',
             idDiscogs: 'https://www.discogs.com/artist/',
             idMetalArchivesArtist: 'https://www.metal-archives.com/artist.php?id=',
+            idBookBrainz: 'https://bookbrainz.org/author/',
             idGenius: 'https://genius.com/artists/',
             idSecondHandSongs: 'https://secondhandsongs.com/artist/',
             idVGMDB: 'https://vgmdb.net/artist/',
             idOperabase: 'http://operabase.com/artists/',
             idSNAC: 'http://snaccooperative.org/ark:/99166/',
+            idRateYourMusic: 'https://rateyourmusic.com/artist/',
+            idWhoSampled: 'https://www.whosampled.com/',
             // social media
             idTwitter: 'https://twitter.com/',
             idInstagram: 'https://www.instagram.com/',
@@ -147,12 +179,13 @@ class WikiDataHelpers {
             idMyspace: 'https://myspace.com/',
             idWeibo: 'https://weibo.com/',
             idPinterest: 'https://www.pinterest.com/',
+            idTikTok: 'https://www.tiktok.com/@',
             idThreads: 'https://www.threads.net/@',
             // other
             idSpotify: 'https://open.spotify.com/artist/',
             idYoutube: 'https://www.youtube.com/channel/',
             idDeezer: 'https://www.deezer.com/artist/',
-            idiTunes: 'https://itunes.apple.com/artist/',
+            idiTunes: 'https://music.apple.com/artist/',
             idNapster: 'https://web.napster.com/artist/',
             idTidal: 'https://tidal.com/browse/artist/',
             idAmazonMusic: 'https://music.amazon.com/artists/',
@@ -163,7 +196,20 @@ class WikiDataHelpers {
             idSongkick: 'https://www.songkick.com/artists/',
             idVimeo: 'https://vimeo.com/',
             idPatreon: 'https://www.patreon.com/',
+            idTwitch: 'https://www.twitch.tv/',
             idAnghami: 'https://play.anghami.com/artist/',
+            idImage: 'https://commons.wikimedia.org/wiki/File:',
+            // series
+            idFeed: '',
+            idApple: 'https://podcasts.apple.com/us/podcast/',
+            idHeart: 'https://www.iheart.com/podcast/',
+            idListen: 'https://www.listennotes.com/podcasts/_-',
+            idNPR: 'https://www.npr.org/podcasts/',
+            idPlayer: 'https://player.fm/series/',
+            //idPocket: 'https://pca.st/',
+            idPIndex: 'https://podcastindex.org/podcast/',
+            idPodchaser: 'https://www.podchaser.com/podcasts/',
+            idSpotifyShow: 'https://open.spotify.com/show/'
         };
     }
 
@@ -321,6 +367,7 @@ for (const [key, value] of Object.entries(FIELD_NAMES)) {
         FIELD_NAMES[key.replace('artist', 'place')] = value;
         FIELD_NAMES[key.replace('artist', 'work')] = value;
         FIELD_NAMES[key.replace('artist', 'label')] = value;
+        FIELD_NAMES[key.replace('artist', 'series')] = value;
     }
 }
 
@@ -593,6 +640,19 @@ function _fillFormFromWikidata(entity, entityType) {
         }
     }
 
+    for (const role of ['presenter']) {
+        if (libWD.existField(entity, role)) {
+            libWD.request(libWD.fieldValue(entity, role).id, data => {
+                const name = data.labels[lang].value;
+                $('#newFields').append(
+                    $('<dt>', {'text': `${role} suggestion:`})
+                ).append(
+                    $('<dd>', {'text': name}).css('color', 'orange')
+                );
+            });
+        }
+    }
+
     for (const role of ['student', 'teacher']) {
         if (libWD.existField(entity, role)) {
             libWD.request(libWD.fieldValue(entity, role).id, data => {
@@ -609,15 +669,13 @@ function _fillFormFromWikidata(entity, entityType) {
 
 function fillFormFromWikidata(wikiId) {
     const entityType = document.URL.split('/')[3];
+    const entityMBID = 'mbid' + entityType.charAt(0).toUpperCase() + entityType.slice(1)
     libWD.request(wikiId, entity => {
         if (
             document.URL.split('/')[4] == 'create' &&
-            (libWD.existField(entity, 'mbidArtist') ||
-                libWD.existField(entity, 'mbidPlace'))
+            (libWD.existField(entity, entityMBID))
         ) {
-            const mbid = libWD.existField(entity, 'mbidArtist')
-                ? libWD.fieldValue(entity, 'mbidArtist')
-                : libWD.fieldValue(entity, 'mbidPlace');
+            const mbid = libWD.fieldValue(entity, entityMBID);
             // eslint-disable-next-line no-alert
             if (window.confirm(
                     'An entity already exists linked to this wikidata id, ' +
